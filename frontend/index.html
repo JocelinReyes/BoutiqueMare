@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+
+  <!-- 🔥 IMPORTANTE PARA CELULAR -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+
+  <title>Boutique Mare</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="container app">
+    <h1>💜 Boutique Mare</h1>
+
+    <div class="grid">
+
+      <!-- INVENTARIO -->
+      <div class="card">
+        <h2>📦 Inventario</h2>
+
+        <input id="nombre" placeholder="Producto">
+        <input id="compra" type="number" placeholder="Compra">
+        <input id="venta" type="number" placeholder="Venta">
+        <input id="stock" type="number" placeholder="Stock">
+        <button onclick="agregarProducto()">Agregar</button>
+
+        <input id="buscar" placeholder="Buscar..." onkeyup="filtrar()">
+
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Compra</th>
+              <th>Venta</th>
+              <th>Ganancia</th>
+              <th>Stock</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tabla"></tbody>
+        </table>
+      </div>
+
+      <!-- VENTAS -->
+      <div class="card">
+        <h2>🛒 Venta</h2>
+
+        <select id="productoVenta"></select>
+        <input id="cantidadVenta" type="number" placeholder="Cantidad">
+        <button onclick="vender()">Vender</button>
+
+        <h3 id="ganancias">💰 Total: $0</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cant</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="tablaVentas"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- DEUDAS -->
+    <div class="card">
+      <h2>💸 Deudas</h2>
+
+      <input id="cliente" placeholder="Cliente">
+      <input id="montoDeuda" type="number" placeholder="Monto">
+      <button onclick="crearDeuda()">Agregar</button>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Total</th>
+            <th>Pagado</th>
+            <th>Pendiente</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tablaDeudas"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
