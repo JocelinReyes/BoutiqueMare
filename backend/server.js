@@ -10,7 +10,7 @@ app.use(cors());
 const { Pool } = require('pg');
 
 const pool = new Pool({
-  connectionString: "postgresql://postgres:1211BoutiqueReyes@db.yxyoqthdxmrehfjgxvzm.supabase.co:5432/postgres",
+  connectionString: process.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 
