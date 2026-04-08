@@ -1,3 +1,5 @@
+require('dotenv').config(); // 🔥 importante
+
 const express = require('express');
 const cors = require('cors');
 
@@ -10,8 +12,17 @@ app.use(cors());
 const { Pool } = require('pg');
 
 const pool = new Pool({
-  connectionString: process.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+// ===================
+// TEST (para verificar conexión)
+// ===================
+app.get('/', (req, res) => {
+  res.send("API funcionando 🚀");
 });
 
 // ===================
@@ -27,30 +38,33 @@ app.post('/productos', async (req, res) => {
       [nombre, precio_compra, precio_venta, stock]
     );
 
-    res.send({ id: result.rows[0].id });
+    res.json({ id: result.rows[0].id });
 
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
 app.get('/productos', async (req, res) => {
   try {
     const result = await pool.query(`SELECT * FROM productos`);
-    res.send(result.rows);
+    res.json(result.rows);
 
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
 app.delete('/productos/:id', async (req, res) => {
   try {
     await pool.query(`DELETE FROM productos WHERE id = $1`, [req.params.id]);
-    res.send({ success: true });
+    res.json({ success: true });
 
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -65,10 +79,11 @@ app.put('/productos/:id', async (req, res) => {
       [nombre, precio_compra, precio_venta, stock, req.params.id]
     );
 
-    res.send({ success: true });
+    res.json({ success: true });
 
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -85,13 +100,13 @@ app.post('/ventas', async (req, res) => {
     );
 
     if (producto.rows.length === 0) {
-      return res.status(404).send("Producto no existe");
+      return res.status(404).json({ error: "Producto no existe" });
     }
 
     const p = producto.rows[0];
 
     if (p.stock < cantidad) {
-      return res.status(400).send("No hay suficiente stock");
+      return res.status(400).json({ error: "No hay suficiente stock" });
     }
 
     const total = p.precio_venta * cantidad;
@@ -107,10 +122,11 @@ app.post('/ventas', async (req, res) => {
       [cantidad, producto_id]
     );
 
-    res.send({ success: true });
+    res.json({ success: true });
 
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -123,10 +139,11 @@ app.get('/ventas', async (req, res) => {
       ORDER BY v.fecha DESC
     `);
 
-    res.send(result.rows);
+    res.json(result.rows);
 
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -136,10 +153,11 @@ app.get('/ventas', async (req, res) => {
 app.get('/ganancias', async (req, res) => {
   try {
     const result = await pool.query(`SELECT SUM(total) as total FROM ventas`);
-    res.send({ total: result.rows[0].total || 0 });
+    res.json({ total: result.rows[0].total || 0 });
 
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -155,10 +173,11 @@ app.post('/deudas', async (req, res) => {
       [cliente, total]
     );
 
-    res.send({ success: true });
+    res.json({ success: true });
 
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -168,10 +187,11 @@ app.get('/deudas', async (req, res) => {
       SELECT *, (total - pagado) as pendiente FROM deudas
     `);
 
-    res.send(result.rows);
+    res.json(result.rows);
 
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -185,14 +205,14 @@ app.put('/deudas/pagar/:id', async (req, res) => {
     );
 
     if (deuda.rows.length === 0) {
-      return res.status(404).send("Deuda no encontrada");
+      return res.status(404).json({ error: "Deuda no encontrada" });
     }
 
     const d = deuda.rows[0];
     const nuevoPagado = Number(d.pagado) + Number(monto);
 
     if (nuevoPagado > d.total) {
-      return res.status(400).send("El pago excede la deuda");
+      return res.status(400).json({ error: "El pago excede la deuda" });
     }
 
     await pool.query(
@@ -200,10 +220,11 @@ app.put('/deudas/pagar/:id', async (req, res) => {
       [nuevoPagado, req.params.id]
     );
 
-    res.send({ success: true });
+    res.json({ success: true });
 
   } catch (error) {
-    res.status(500).send(error.message);
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
