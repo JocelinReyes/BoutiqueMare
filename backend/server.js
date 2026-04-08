@@ -1,4 +1,4 @@
-require('dotenv').config(); // 🔥 importante
+require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
@@ -13,13 +13,16 @@ const { Pool } = require('pg');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: { rejectUnauthorized: false }
 });
 
+// 🧪 TEST DE CONEXIÓN (MUY IMPORTANTE)
+pool.connect()
+  .then(() => console.log("✅ Conectado a Supabase"))
+  .catch(err => console.error("❌ Error conexión:", err));
+
 // ===================
-// TEST (para verificar conexión)
+// TEST API
 // ===================
 app.get('/', (req, res) => {
   res.send("API funcionando 🚀");
@@ -41,7 +44,7 @@ app.post('/productos', async (req, res) => {
     res.json({ id: result.rows[0].id });
 
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error POST /productos:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -52,7 +55,7 @@ app.get('/productos', async (req, res) => {
     res.json(result.rows);
 
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error GET /productos:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -63,7 +66,7 @@ app.delete('/productos/:id', async (req, res) => {
     res.json({ success: true });
 
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error DELETE /productos:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -82,7 +85,7 @@ app.put('/productos/:id', async (req, res) => {
     res.json({ success: true });
 
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error PUT /productos:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -125,7 +128,7 @@ app.post('/ventas', async (req, res) => {
     res.json({ success: true });
 
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error POST /ventas:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -142,7 +145,7 @@ app.get('/ventas', async (req, res) => {
     res.json(result.rows);
 
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error GET /ventas:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -156,7 +159,7 @@ app.get('/ganancias', async (req, res) => {
     res.json({ total: result.rows[0].total || 0 });
 
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error GET /ganancias:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -176,7 +179,7 @@ app.post('/deudas', async (req, res) => {
     res.json({ success: true });
 
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error POST /deudas:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -190,7 +193,7 @@ app.get('/deudas', async (req, res) => {
     res.json(result.rows);
 
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error GET /deudas:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -223,7 +226,7 @@ app.put('/deudas/pagar/:id', async (req, res) => {
     res.json({ success: true });
 
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error PUT /deudas:", error);
     res.status(500).json({ error: error.message });
   }
 });
